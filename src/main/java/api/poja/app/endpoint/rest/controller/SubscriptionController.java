@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubscriptionController {
   private final EventProducer<CourseSubscribed> eventProducer;
 
-  @PostMapping("/users/{userId}/courses/{courseId}/subscribe")
+  @PostMapping("/mailing/async/subscribe/{userId}/{courseId}")
   public ResponseEntity<Void> subscribe(@PathVariable UUID userId, @PathVariable UUID courseId) {
     var event = CourseSubscribed.builder().userId(userId).courseId(courseId).build();
     eventProducer.accept(List.of(event));

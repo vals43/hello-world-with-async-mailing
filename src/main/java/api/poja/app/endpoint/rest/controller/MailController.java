@@ -20,7 +20,7 @@ public class MailController {
   private final CourseRepository courseRepository;
   private final Mailer mailer;
 
-  @PostMapping("/mailing/subscribe/{userId}/{courseId}")
+  @PostMapping("/mailing/sync/subscribe/{userId}/{courseId}")
   public ResponseEntity<String> subscribe(@PathVariable UUID userId, @PathVariable UUID courseId) {
     try {
       var user = userRepository.findById(userId)
