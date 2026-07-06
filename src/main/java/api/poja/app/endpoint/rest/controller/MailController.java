@@ -1,7 +1,5 @@
 package api.poja.app.endpoint.rest.controller;
 
-import api.poja.app.entity.Course;
-import api.poja.app.entity.User;
 import api.poja.app.mail.Email;
 import api.poja.app.mail.Mailer;
 import api.poja.app.repository.CourseRepository;
@@ -11,20 +9,19 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-public class DebugController {
+public class MailController {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final Mailer mailer;
 
-  @GetMapping("/debug/subscribe-sync")
-  public ResponseEntity<String> subscribeSync(
-      @RequestParam UUID userId, @RequestParam UUID courseId, @RequestParam String email) {
+  @PostMapping("/mailing/subscribe/{userId}/{courseId}")
+  public ResponseEntity<String> subscribe(@PathVariable UUID userId, @PathVariable UUID courseId) {
     try {
       var user = userRepository.findById(userId)
           .orElseThrow(() -> new RuntimeException("User not found: " + userId));
@@ -37,7 +34,7 @@ public class DebugController {
         userRepository.save(user);
       }
 
-      var recipient = new InternetAddress(email);
+      var recipient = new InternetAddress(user.getEmail());
       mailer.accept(new Email(
           recipient,
           List.of(),
@@ -46,9 +43,10 @@ public class DebugController {
           "<h1>Inscription confirmée</h1><p>Cours : <b>" + course.getTitle() + "</b></p>",
           List.of()));
 
-      return ResponseEntity.ok("OK - Email envoyé à " + email);
+      return ResponseEntity.ok("Email envoyé à " + user.getEmail());
     } catch (Exception e) {
-      return ResponseEntity.internalServerError().body("ERREUR: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+      return ResponseEntity.internalServerError()
+          .body("ERREUR: " + e.getClass().getSimpleName() + " - " + e.getMessage());
     }
   }
 }
