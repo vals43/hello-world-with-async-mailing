@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: Subscription Mailing API
+  description: API d'inscription aux cours avec envoi d'email de confirmation
+  version: 1.0.0
+paths:
+  /mailing/sync/subscribe/{userId}/{courseId}:
+    post:
+      summary: Inscription synchrone
+      description: Inscrit un utilisateur à un cours et envoie l'email de confirmation de manière synchrone
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 00000000-0000-0000-0000-000000000001
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 00000000-0000-0000-0000-000000000002
+      responses:
+        '200':
+          description: Inscription réussie, email envoyé
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Email envoyé à user@example.com
+        '500':
+          description: Erreur lors de l'inscription ou de l'envoi
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "ERREUR: RuntimeException - User not found: 00000000-0000-0000-0000-000000000001"
+  /mailing/async/subscribe/{userId}/{courseId}:
+    post:
+      summary: Inscription asynchrone
+      description: Produit un événement d'inscription, le traitement (DB + email) est effectué de manière asynchrone via le pipeline EventBridge/SQS/Lambda
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 00000000-0000-0000-0000-000000000001
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 00000000-0000-0000-0000-000000000002
+      responses:
+        '202':
+          description: Événement produit, traitement en cours (asynchrone)
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        userName:
+          type: string
+        email:
+          type: string
+          format: email
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
