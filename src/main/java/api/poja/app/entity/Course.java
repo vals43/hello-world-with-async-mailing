@@ -21,8 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Course {
 
-  @Id
-  private UUID id;
+  @Id private UUID id;
 
   @Column(nullable = false)
   private String title;

@@ -24,10 +24,14 @@ public class CourseSubscribedService implements Consumer<CourseSubscribed> {
   @SneakyThrows
   @Transactional
   public void accept(CourseSubscribed event) {
-    var user = userRepository.findById(event.getUserId())
-        .orElseThrow(() -> new RuntimeException("User not found: " + event.getUserId()));
-    var course = courseRepository.findById(event.getCourseId())
-        .orElseThrow(() -> new RuntimeException("Course not found: " + event.getCourseId()));
+    var user =
+        userRepository
+            .findById(event.getUserId())
+            .orElseThrow(() -> new RuntimeException("User not found: " + event.getUserId()));
+    var course =
+        courseRepository
+            .findById(event.getCourseId())
+            .orElseThrow(() -> new RuntimeException("Course not found: " + event.getCourseId()));
 
     if (!user.getCourses().contains(course)) {
       user.getCourses().add(course);
@@ -35,12 +39,15 @@ public class CourseSubscribedService implements Consumer<CourseSubscribed> {
     }
 
     var recipient = new InternetAddress(user.getEmail());
-    mailer.accept(new Email(
-        recipient,
-        List.of(),
-        List.of(),
-        "Confirmation d'inscription",
-        "<h1>Inscription confirmée</h1><p>Vous êtes inscrit au cours : <b>" + course.getTitle() + "</b></p>",
-        List.of()));
+    mailer.accept(
+        new Email(
+            recipient,
+            List.of(),
+            List.of(),
+            "Confirmation d'inscription",
+            "<h1>Inscription confirmée</h1><p>Vous êtes inscrit au cours : <b>"
+                + course.getTitle()
+                + "</b></p>",
+            List.of()));
   }
 }

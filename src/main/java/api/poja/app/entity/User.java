@@ -22,8 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User {
 
-  @Id
-  private UUID id;
+  @Id private UUID id;
 
   @Column(name = "first_name", nullable = false)
   private String firstName;
