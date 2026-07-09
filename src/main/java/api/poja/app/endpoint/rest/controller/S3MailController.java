@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +17,7 @@ public class S3MailController {
 
   private final Mailer mailer;
 
-  @GetMapping("/email-with-pdf")
+  @PostMapping("/email-with-pdf")
   public ResponseEntity<String> sendEmailWithPdf(@RequestParam String to) {
 
     try {
